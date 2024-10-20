@@ -1,16 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { XIcon, SearchIcon } from '@heroicons/react/solid';
 import SearchResult from './SearchResult';
 import { StockContext } from '../contexts/StockContextProvider';
 import { fetchStockData, getStockSymbolDetail } from '../../stock-api';
+import useOutsideClick from '../Hooks/useOutsideClick';
 
 const Search = () => {
   const { setStockSymbol, setStockInfo } = useContext(StockContext);
   const [query, setQuery] = useState('');
   const [autoSuggestion, setAutoSuggestion] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const suggestionsRef = useRef(null);
 
   const clearInput = () => {
     setQuery('');
@@ -19,6 +26,7 @@ const Search = () => {
 
   const onSubmitHandler = async () => {
     setLoading(true);
+    clearInput();
     setStockSymbol(query);
     const data = await getStockSymbolDetail(query);
     setStockInfo(data);
@@ -31,12 +39,11 @@ const Search = () => {
       let res;
       if (query) {
         res = await fetchStockData(query);
-        console.log(res);
         setAutoSuggestion(res);
       }
     } catch (e) {
-      setError('Failed To Get Any Data');
       setAutoSuggestion([]);
+      throw new Error('Failed To Get Any Data');
     } finally {
       setLoading(false);
     }
@@ -65,6 +72,8 @@ const Search = () => {
       getDebounceCall(query);
     }
   }, [query, getDebounceCall]);
+
+  useOutsideClick(suggestionsRef, () => setAutoSuggestion([]));
 
   return (
     <div className='flex flex-col'>
@@ -99,8 +108,13 @@ const Search = () => {
         >
           <SearchIcon className={'w-4 h-4 fill-gray-100'} />
         </button>
-        {query && query.length > 0 ? (
-          <SearchResult results={autoSuggestion} onClick={onSubmitHandler} />
+        {query && query?.length > 0 ? (
+          <div
+            className='absolute w-full h-auto overflow-y-scroll bg-white border-2 rounded-md max-h-64 top-12 border-neutral-200'
+            ref={suggestionsRef}
+          >
+            <SearchResult results={autoSuggestion} onClick={onSubmitHandler} />
+          </div>
         ) : null}
       </div>
     </div>

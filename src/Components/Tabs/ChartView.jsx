@@ -13,7 +13,6 @@ const ChartView = () => {
   const [result, setResult] = useState();
   const [filter, setFilter] = useState('1m');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const getSymbolChart = async (filter) => {
     setLoading(true);
@@ -25,7 +24,7 @@ const ChartView = () => {
       }
     } catch (e) {
       setResult(null);
-      setError('Failed To Get Any Data');
+      throw new Error('Failed To Get Any Data');
     } finally {
       setLoading(false);
     }
@@ -49,7 +48,7 @@ const ChartView = () => {
     return [];
   };
 
-  const [chartOptions, setChartOptions] = useState({
+  const chartOptions = {
     chart: {
       type: 'area',
       zoom: {
@@ -89,7 +88,7 @@ const ChartView = () => {
       text: stockSymbol.toUpperCase(),
       align: 'left',
     },
-  });
+  };
 
   const [series, setSeries] = useState([
     {
@@ -121,7 +120,7 @@ const ChartView = () => {
           </div>
         ) : (
           <>
-            <ul className='absolute z-40 flex top-16 right-2'>
+            <ul className='absolute z-40 flex -top-10 right-2'>
               {Object.keys(chartConfig).map((item, index) => {
                 return (
                   <li key={index}>

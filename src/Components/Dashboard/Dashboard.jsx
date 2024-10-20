@@ -19,7 +19,7 @@ const Dashboard = () => {
       </div>
       <div className='row-span-6 md:col-span-4'>
         <Card>
-          {stockSymbol || Object.keys(stockInfo).length !== 0 ? (
+          {stockSymbol && Object?.keys(stockInfo)?.length !== 0 ? (
             <Content />
           ) : (
             <EmptyView />
