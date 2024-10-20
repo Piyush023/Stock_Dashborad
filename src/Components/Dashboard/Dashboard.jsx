@@ -7,6 +7,7 @@ import EmptyView from '../EmptyView/EmptyView';
 
 const Dashboard = () => {
   const { stockSymbol, stockInfo } = useContext(StockContext);
+
   return (
     <div
       className={
@@ -17,7 +18,13 @@ const Dashboard = () => {
         <Search />
       </div>
       <div className='row-span-6 md:col-span-4'>
-        <Card>{stockSymbol || stockInfo ? <Content /> : <EmptyView />}</Card>
+        <Card>
+          {stockSymbol || Object.keys(stockInfo).length !== 0 ? (
+            <Content />
+          ) : (
+            <EmptyView />
+          )}
+        </Card>
       </div>
     </div>
   );
