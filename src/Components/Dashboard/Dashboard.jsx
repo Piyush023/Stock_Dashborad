@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Card from './Card';
 import Search from './Search';
 import Content from './Content';
+import { StockContext } from '../contexts/StockContextProvider';
+import EmptyView from '../EmptyView/EmptyView';
 
 const Dashboard = () => {
+  const { stockSymbol, stockInfo } = useContext(StockContext);
   return (
     <div
       className={
@@ -14,16 +17,8 @@ const Dashboard = () => {
         <Search />
       </div>
       <div className='row-span-6 md:col-span-4'>
-        <Card>
-          <Content />
-        </Card>
+        <Card>{stockSymbol || stockInfo ? <Content /> : <EmptyView />}</Card>
       </div>
-      {/* <div className='row-span-3 xl:row-span-1'>
-        <Card>Graph</Card>
-      </div>
-      <div className='row-span-3 xl:row-span-3'>
-        <Card>Detail</Card>
-      </div> */}
     </div>
   );
 };
